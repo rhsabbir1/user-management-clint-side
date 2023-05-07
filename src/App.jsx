@@ -5,12 +5,12 @@ import { json } from 'react-router-dom'
 
 function App() {
 
-  const [user, setUser] = useState([])
+  const [users, setusers] = useState([])
 
   useEffect(() => {
     fetch('http://localhost:5000/user')
       .then(res => res.json())
-      .then(data => setUser(data))
+      .then(data => setusers(data))
       .catch(err => {
         console.log(err)
       })
@@ -25,17 +25,19 @@ function App() {
     const user = { name, email }
 
     fetch('http://localhost:5000/user', {
-      method: 'POST',
+      method: "POST",
       headers: {
-        'content-type': "application/json"
+        'content-type': 'application/json'
       },
       body: JSON.stringify(user)
     })
-    .then(res => res.json())
-    .then(data => console.log(data))
-
-    console.log(user)
-    from.reset()
+      .then(res => res.json())
+      .then(data => {
+        console.log(data)
+        const newUser = [...users, data]
+        setusers(newUser)
+        from.reset()
+      })
 
   }
 
@@ -44,8 +46,8 @@ function App() {
   return (
     <>
 
-      <h1>Vite + React</h1>
-      <h4>{user.length}</h4>
+      <h1>User management</h1>
+      <h4>{users.length}</h4>
 
       <form onSubmit={handleSubmit}>
         <input type="text" name='name' placeholder='Name' />
@@ -54,7 +56,11 @@ function App() {
         <br />
         <input type="submit" value="Submit" />
       </form>
-
+      {
+        users.map(user => <p
+          key={user.id}>{user.name
+          }</p>)
+      }
     </>
   )
 }
